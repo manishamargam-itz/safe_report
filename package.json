@@ -19,6 +19,7 @@
     "@prisma/adapter-neon": "^6.7.0",
     "@prisma/client": "^6.9.0",
     "bcryptjs": "^3.0.2",
+    "chart.js": "^4.4.9",
     "firebase": "^11.6.1",
     "framer-motion": "^12.16.0",
     "lucide-react": "^0.503.0",
@@ -26,6 +27,7 @@
     "next": "15.3.1",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "ws": "^8.18.1"
   },
