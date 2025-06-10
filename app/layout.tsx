@@ -11,6 +11,7 @@ import Navbar from "@app/components/Navbar";
 //port Navbar from "@/components/Navbar"
 
 //port { Providers } from "./providers";
+import EmergencyWidget from "./components/EmergencyWidget";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,9 +27,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className + " bg-white dark:bg-neutral-900 dark:text-white transition-colors duration-300"}>
         <Providers>
           <Navbar />
+          <EmergencyWidget />
           <main className="pt-16">
             {children}
           </main>

@@ -113,10 +113,10 @@ export function LocationInput({
     setShowSuggestions(false);
     inputRef.current?.focus();
   };
-
+// ...existing code...
   return (
     <div className="space-y-2" ref={containerRef}>
-      <label className="block text-sm font-medium text-zinc-400">
+      <label className="block text-sm font-medium text-gray-700">
         Location
       </label>
       <div className="relative">
@@ -131,17 +131,17 @@ export function LocationInput({
           }}
           onFocus={() => setShowSuggestions(true)}
           placeholder="Enter location or use pin"
-          className="w-full rounded-xl bg-zinc-900/50 border border-zinc-800 pl-4 pr-12 py-3.5
-                   text-white transition-colors duration-200
-                   focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+          className="w-full rounded-xl bg-white border border-gray-200 pl-4 pr-12 py-3.5
+                   text-gray-900 transition-colors duration-200
+                   focus:outline-none focus:ring-2 focus:ring-sky-200"
         />
         
         {showSuggestions && suggestions.length > 0 && (
-          <ul className="absolute z-10 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-auto">
+          <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
             {suggestions.map((suggestion) => (
               <li
                 key={suggestion.id}
-                className="px-4 py-2 hover:bg-zinc-700 cursor-pointer text-white"
+                className="px-4 py-2 hover:bg-sky-50 cursor-pointer text-gray-900"
                 onClick={() => handleSelectSuggestion(suggestion)}
               >
                 {suggestion.place_name}
@@ -154,7 +154,7 @@ export function LocationInput({
           type="button"
           onClick={getLocation}
           className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5
-                   rounded-lg bg-sky-500/10 text-sky-400 
+                   rounded-lg bg-sky-500/10 text-sky-500 
                    hover:bg-sky-500/20 transition-colors duration-200
                    disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isGettingLocation}
@@ -205,7 +205,7 @@ export function LocationInput({
         </button>
       </div>
       {locationError && (
-        <p className="text-sm text-red-400 flex items-center gap-2">
+        <p className="text-sm text-red-500 flex items-center gap-2">
           <svg
             className="h-4 w-4"
             fill="none"
@@ -224,4 +224,5 @@ export function LocationInput({
       )}
     </div>
   );
+// ...existing code...
 }

@@ -37,13 +37,14 @@ export function ReportForm({ onComplete }: ReportFormProps) {
     longitude: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsAnalyzing(true);
-
+    setAnalyzeError(null);
     try {
       const base64 = await new Promise((resolve) => {
         const reader = new FileReader();
@@ -59,6 +60,11 @@ export function ReportForm({ onComplete }: ReportFormProps) {
 
       const data = await response.json();
 
+      if (response.status === 429) {
+        setAnalyzeError(data.error || "Too many requests. Please try again later.");
+        return;
+      }
+
       if (data.title && data.description && data.reportType) {
         setFormData((prev) => ({
           ...prev,
@@ -69,6 +75,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
         setImage(base64 as string);
       }
     } catch (error) {
+      setAnalyzeError("Failed to analyze image. Please try again later.");
       console.error("Error analyzing image:", error);
     } finally {
       setIsAnalyzing(false);
@@ -126,6 +133,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
     }
   };
 
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Emergency Type Selection */}
@@ -138,7 +146,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
           className={`p-6 rounded-2xl border-2 transition-all duration-200 ${
             formData.incidentType === "EMERGENCY"
               ? "bg-red-500/20 border-red-500 shadow-lg shadow-red-500/20"
-              : "bg-zinc-900/50 border-zinc-800 hover:bg-red-500/10 hover:border-red-500/50"
+              : "bg-white border-gray-200 hover:bg-red-50 hover:border-red-300"
           }`}
         >
           <div className="flex flex-col items-center space-y-2">
@@ -156,7 +164,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
               />
             </svg>
             <span className="font-medium text-red-500">Emergency</span>
-            <span className="text-xs text-zinc-400">
+            <span className="text-xs text-gray-500">
               Immediate Response Required
             </span>
           </div>
@@ -170,7 +178,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
           className={`p-6 rounded-2xl border-2 transition-all duration-200 ${
             formData.incidentType === "NON_EMERGENCY"
               ? "bg-orange-500/20 border-orange-500 shadow-lg shadow-orange-500/20"
-              : "bg-zinc-900/50 border-zinc-800 hover:bg-orange-500/10 hover:border-orange-500/50"
+              : "bg-white border-gray-200 hover:bg-orange-50 hover:border-orange-300"
           }`}
         >
           <div className="flex flex-col items-center space-y-2">
@@ -188,7 +196,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
               />
             </svg>
             <span className="font-medium text-orange-500">Non-Emergency</span>
-            <span className="text-xs text-zinc-400">General Report</span>
+            <span className="text-xs text-gray-500">General Report</span>
           </div>
         </button>
       </div>
@@ -204,9 +212,9 @@ export function ReportForm({ onComplete }: ReportFormProps) {
         />
         <label
           htmlFor="image-upload"
-          className="block w-full p-8 border-2 border-dashed border-zinc-700 rounded-2xl 
-                   hover:border-sky-500/50 hover:bg-sky-500/5 transition-all duration-200
-                   cursor-pointer text-center"
+          className="block w-full p-8 border-2 border-dashed border-gray-200 rounded-2xl 
+                   hover:border-sky-500/50 hover:bg-sky-50 transition-all duration-200
+                   cursor-pointer text-center bg-white"
         >
           {image ? (
             <div className="space-y-4">
@@ -217,12 +225,12 @@ export function ReportForm({ onComplete }: ReportFormProps) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <p className="text-sm text-zinc-400">Click to change image</p>
+              <p className="text-sm text-gray-500">Click to change image</p>
             </div>
           ) : (
             <div className="space-y-4">
               <svg
-                className="mx-auto h-12 w-12 text-zinc-500"
+                className="mx-auto h-12 w-12 text-gray-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -234,14 +242,14 @@ export function ReportForm({ onComplete }: ReportFormProps) {
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <p className="text-sm text-zinc-400">
+              <p className="text-sm text-gray-400">
                 Drop an image here or click to upload
               </p>
             </div>
           )}
         </label>
         {isAnalyzing && (
-          <div className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center">
+          <div className="absolute inset-0 bg-white/70 rounded-2xl flex items-center justify-center">
             <div className="flex items-center space-x-3">
               <svg
                 className="animate-spin h-5 w-5 text-sky-500"
@@ -269,11 +277,14 @@ export function ReportForm({ onComplete }: ReportFormProps) {
             </div>
           </div>
         )}
+        {analyzeError && (
+          <div className="mt-2 text-sm text-red-500 text-center">{analyzeError}</div>
+        )}
       </div>
 
       {/* Specific Report Type */}
       <div>
-        <label className="block text-sm font-medium text-zinc-400 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Incident Type
         </label>
         <select
@@ -281,9 +292,9 @@ export function ReportForm({ onComplete }: ReportFormProps) {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, specificType: e.target.value }))
           }
-          className="w-full rounded-xl bg-zinc-900/50 border border-zinc-800 px-4 py-3.5
-                   text-white transition-colors duration-200
-                   focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+          className="w-full rounded-xl bg-white border border-gray-200 px-4 py-3.5
+                   text-gray-700 transition-colors duration-200
+                   focus:outline-none focus:ring-2 focus:ring-sky-200"
           required
         >
           <option value="">Select type</option>
@@ -311,7 +322,7 @@ export function ReportForm({ onComplete }: ReportFormProps) {
 
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium text-zinc-400 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Report Title
         </label>
         <input
@@ -320,16 +331,16 @@ export function ReportForm({ onComplete }: ReportFormProps) {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, title: e.target.value }))
           }
-          className="w-full rounded-xl bg-zinc-900/50 border border-zinc-800 px-4 py-3.5
-                   text-white transition-colors duration-200
-                   focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+          className="w-full rounded-xl bg-white border border-gray-200 px-4 py-3.5
+                   text-gray-700 transition-colors duration-200
+                   focus:outline-none focus:ring-2 focus:ring-sky-200"
           required
         />
       </div>
 
       {/* Description */}
       <div>
-        <label className="block text-sm font-medium text-zinc-400 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Description
         </label>
         <textarea
@@ -338,9 +349,9 @@ export function ReportForm({ onComplete }: ReportFormProps) {
             setFormData((prev) => ({ ...prev, description: e.target.value }))
           }
           rows={4}
-          className="w-full rounded-xl bg-zinc-900/50 border border-zinc-800 px-4 py-3.5
-                   text-white transition-colors duration-200
-                   focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+          className="w-full rounded-xl bg-white border border-gray-200 px-4 py-3.5
+                   text-gray-700 transition-colors duration-200
+                   focus:outline-none focus:ring-2 focus:ring-sky-200"
           required
         />
       </div>
@@ -349,9 +360,9 @@ export function ReportForm({ onComplete }: ReportFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full relative group overflow-hidden rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 
+        className="w-full relative group overflow-hidden rounded-xl bg-gradient-to-br from-sky-600 to-green-300 
                  px-4 py-3.5 text-sm font-medium text-white shadow-lg
-                 transition-all duration-200 hover:from-sky-400 hover:to-blue-500
+                 transition-all duration-200 hover:from-sky-400 hover:to-green-250
                  disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <div className="relative flex items-center justify-center gap-2">

@@ -37,8 +37,15 @@ DESCRIPTION: Write a clear, concise description`;
       reportType: typeMatch?.[1]?.trim() || "",
       description: descMatch?.[1]?.trim() || "",
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Image analysis error:", error);
+    // Handle rate limit (429) errors gracefully
+    if (error?.response?.status === 429 || error?.status === 429) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait and try again later." },
+        { status: 429 }
+      );
+    }
     return NextResponse.json(
       { error: "Failed to analyze image" },
       { status: 500 }

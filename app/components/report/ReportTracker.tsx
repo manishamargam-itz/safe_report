@@ -69,6 +69,7 @@ export function ReportTracker() {
         </p>
       </div>
 
+     
       {/* Dynamic Layout Container */}
       <div className="flex justify-center">
         <div
@@ -81,15 +82,15 @@ export function ReportTracker() {
         >
           {/* Form Section */}
           <div
-            className={`bg-zinc-900/50 backdrop-blur-xl rounded-2xl border 
-            border-white/5 p-6 w-full transition-all duration-300
+            className={`bg-gradient-to-br from-white via-blue-50 to-emerald-50 rounded-2xl border 
+            border-blue-100 p-6 w-full transition-all duration-300
             ${reportDetails ? "" : "mx-auto"}`}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="relative">
                 <label
                   htmlFor="reportId"
-                  className="block text-sm font-medium mb-2 text-zinc-400"
+                  className="block text-sm font-medium mb-2 text-blue-700"
                 >
                   Report ID
                 </label>
@@ -98,16 +99,15 @@ export function ReportTracker() {
                   id="reportId"
                   value={reportId}
                   onChange={(e) => setReportId(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-white/5 rounded-xl
-                           text-white placeholder-zinc-500 focus:outline-none focus:ring-2 
-                           focus:ring-sky-500/50 focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 bg-white border border-blue-100 rounded-xl
+                           text-gray-900 placeholder-blue-300 focus:outline-none focus:ring-2 
+                           focus:ring-sky-400 focus:border-transparent transition-all"
                   placeholder="Enter your report ID"
                   disabled={loading}
                 />
               </div>
-
               {error && (
-                <div className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 p-4 rounded-xl border border-red-500/20">
+                <div className="flex items-center gap-2 text-red-500 text-sm bg-red-100 p-4 rounded-xl border border-red-200">
                   <svg
                     className="h-5 w-5 flex-shrink-0"
                     fill="none"
@@ -128,9 +128,9 @@ export function ReportTracker() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-sky-500 to-blue-600 
+                className="w-full bg-gradient-to-r from-sky-500 to-emerald-400 
                          text-white py-3 px-4 rounded-xl hover:from-sky-400 
-                         hover:to-blue-500 transition-all duration-200 
+                         hover:to-emerald-500 transition-all duration-200 
                          disabled:opacity-50 disabled:cursor-not-allowed
                          flex items-center justify-center space-x-2"
               >
@@ -154,48 +154,48 @@ export function ReportTracker() {
             }`}
           >
             {reportDetails && (
-              <div className="rounded-xl border border-white/5 bg-black/30 backdrop-blur-xl p-6 h-full">
-                <h2 className="text-xl font-semibold text-white flex items-center gap-2 mb-6">
+              <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-emerald-50 p-6 h-full">
+                <h2 className="text-xl font-semibold text-blue-700 flex items-center gap-2 mb-6">
                   <div className="h-2 w-2 rounded-full bg-sky-400" />
                   Report Details
                 </h2>
 
                 <div className="grid gap-4">
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-white/5">
-                    <span className="text-zinc-400">Status</span>
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-blue-50">
+                    <span className="text-blue-700">Status</span>
                     <span
                       className={`font-medium ${getStatusColor(
                         reportDetails.status
                       )} 
-                        px-3 py-1 rounded-full bg-white/5`}
+                        px-3 py-1 rounded-full bg-white/60`}
                     >
                       {reportDetails.status}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-white/5">
-                    <span className="text-zinc-400">Type</span>
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-blue-50">
+                    <span className="text-blue-700">Type</span>
                     <span
                       className={`font-medium ${
                         reportDetails.type === "EMERGENCY"
-                          ? "text-red-400"
-                          : "text-blue-400"
-                      } px-3 py-1 rounded-full bg-white/5`}
+                          ? "text-red-500"
+                          : "text-blue-500"
+                      } px-3 py-1 rounded-full bg-white/60`}
                     >
                       {reportDetails.type}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-white/5">
-                    <span className="text-zinc-400">Report ID</span>
-                    <span className="text-white font-mono">
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-blue-50">
+                    <span className="text-blue-700">Report ID</span>
+                    <span className="text-gray-900 font-mono">
                       {reportDetails.reportId || reportDetails.id}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center p-3 rounded-lg bg-white/5">
-                    <span className="text-zinc-400">Submitted On</span>
-                    <span className="text-white">
+                  <div className="flex justify-between items-center p-3 rounded-lg bg-blue-50">
+                    <span className="text-blue-700">Submitted On</span>
+                    <span className="text-gray-900">
                       {new Date(reportDetails.createdAt).toLocaleDateString(
                         undefined,
                         {
@@ -207,23 +207,23 @@ export function ReportTracker() {
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-white/5 space-y-1.5">
-                    <span className="text-zinc-400 text-sm">Title</span>
-                    <span className="text-white block font-medium">
+                  <div className="p-3 rounded-lg bg-blue-50 space-y-1.5">
+                    <span className="text-blue-700 text-sm">Title</span>
+                    <span className="text-gray-900 block font-medium">
                       {reportDetails.title}
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-white/5 space-y-1.5">
-                    <span className="text-zinc-400 text-sm">Location</span>
-                    <span className="text-white block font-medium">
+                  <div className="p-3 rounded-lg bg-blue-50 space-y-1.5">
+                    <span className="text-blue-700 text-sm">Location</span>
+                    <span className="text-gray-900 block font-medium">
                       {reportDetails.location}
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-white/5 space-y-1.5">
-                    <span className="text-zinc-400 text-sm">Description</span>
-                    <p className="text-white text-sm leading-relaxed">
+                  <div className="p-3 rounded-lg bg-blue-50 space-y-1.5">
+                    <span className="text-blue-700 text-sm">Description</span>
+                    <p className="text-gray-900 text-sm leading-relaxed">
                       {reportDetails.description}
                     </p>
                   </div>
@@ -235,6 +235,7 @@ export function ReportTracker() {
       </div>
     </div>
   );
+
 }
 
 function getStatusColor(status: string): string {

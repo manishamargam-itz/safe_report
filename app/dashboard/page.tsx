@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Report, ReportStatus, ReportType } from "@prisma/client";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -21,9 +22,15 @@ export default function Dashboard() {
     try {
       const response = await fetch("/api/reports");
       const data = await response.json();
-      setReports(data);
+      if (Array.isArray(data)) {
+        setReports(data);
+      } else {
+        setReports([]);
+        console.error("Failed to fetch reports:", data.error || data);
+      }
     } catch (error) {
       console.error("Error fetching reports:", error);
+      setReports([]);
     } finally {
       setIsLoading(false);
     }
@@ -98,123 +105,145 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex flex-wrap gap-4 items-center justify-between">
-          <div className="flex gap-4">
-            <select
-              value={filter}
-              onChange={(e) =>
-                setFilter(e.target.value as ReportStatus | "ALL")
-              }
-              className="bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
-            >
-              <option value="ALL">All Statuses</option>
-              {Object.values(ReportStatus).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-sky-50 to-emerald-50">
+        {/* <div className="mb-8">
+          <h1 className="text-3xl font-bold text-sky-800 mb-2">Dashboard</h1>
+          <p className="text-sky-600">
+            Welcome to the admin dashboard. Use the tools below to manage the
+            platform.
+          </p>
+        </div> */}
 
-            <select
-              value={typeFilter}
-              onChange={(e) =>
-                setTypeFilter(e.target.value as ReportType | "ALL")
-              }
-              className="bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
-            >
-              <option value="ALL">All Types</option>
-              {Object.values(ReportType).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-8 flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex gap-4">
+              <select
+                value={filter}
+                onChange={(e) =>
+                  setFilter(e.target.value as ReportStatus | "ALL")
+                }
+                className="bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
+              >
+                <option value="ALL">All Statuses</option>
+                {Object.values(ReportStatus).map((status) => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={typeFilter}
+                onChange={(e) =>
+                  setTypeFilter(e.target.value as ReportType | "ALL")
+                }
+                className="bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
+              >
+                <option value="ALL">All Types</option>
+                {Object.values(ReportType).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+
+              <Link
+                href="/dashboard/admin-community-meetings"
+                className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-emerald-700 transition"
+              >
+                Community Meetings (Admin)
+              </Link>
+              <Link
+                href="/dashboard/admin-community-attendance"
+                className="bg-sky-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-sky-700 transition"
+              >
+                Attendance
+              </Link>
+            </div>
+            <div className="text-neutral-400">
+              {filteredReports.length} Reports
+            </div>
           </div>
 
-          <div className="text-neutral-400">
-            {filteredReports.length} Reports
-          </div>
-        </div>
-
-        <div className="grid gap-4">
-          {filteredReports.map((report) => (
-            <div
-              key={report.id}
-              className="bg-neutral-900/50 backdrop-blur-sm rounded-xl p-6 border border-neutral-800 hover:border-neutral-700 transition-all"
-            >
-              <div className="flex justify-between items-start gap-6">
-                <div className="space-y-4 flex-1">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-lg font-medium text-neutral-200">
-                      {report.title}
-                    </h2>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        report.status
-                      )}`}
-                    >
-                      {report.status}
-                    </span>
+          <div className="grid gap-4">
+            {filteredReports.map((report) => (
+              <div
+                key={report.id}
+                className="bg-gradient-to-br from-sky-50 via-white to-emerald-50 backdrop-blur-sm rounded-xl p-6 border border-neutral-800 hover:border-neutral-700 transition-all"
+              >
+                <div className="flex justify-between items-start gap-6">
+                  <div className="space-y-4 flex-1">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-lg font-medium text-sky-900">
+                        {report.title}
+                      </h2>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                          report.status
+                        )}`}
+                      >
+                        {report.status}
+                      </span>
+                    </div>
+                    <p className="text-sky-800 text-sm">
+                      {report.description}
+                    </p>
+                    <div className="flex flex-wrap gap-6 text-sm text-sky-700">
+                      <span className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-sky-200 flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-sky-400"></div>
+                        </div>
+                        {report.type}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-sky-200 flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-sky-400"></div>
+                        </div>
+                        {report.location || "N/A"}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full bg-sky-200 flex items-center justify-center">
+                          <div className="w-2 h-2 rounded-full bg-sky-400"></div>
+                        </div>
+                        {new Date(report.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    {report.image && (
+                      <img
+                        src={report.image}
+                        alt="Report"
+                        className="mt-4 rounded-lg border border-neutral-200"
+                      />
+                    )}
                   </div>
-                  <p className="text-neutral-400 text-sm">
-                    {report.description}
-                  </p>
-                  <div className="flex flex-wrap gap-6 text-sm text-neutral-500">
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-neutral-800 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-neutral-600"></div>
-                      </div>
-                      {report.type}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-neutral-800 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-neutral-600"></div>
-                      </div>
-                      {report.location || "N/A"}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-neutral-800 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-neutral-600"></div>
-                      </div>
-                      {new Date(report.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  {report.image && (
-                    <img
-                      src={report.image}
-                      alt="Report"
-                      className="mt-4 rounded-lg border border-neutral-800"
-                    />
-                  )}
+                  <select
+                    value={report.status}
+                    onChange={(e) =>
+                      updateReportStatus(
+                        report.id,
+                        e.target.value as ReportStatus
+                      )
+                    }
+                    className="bg-white border border-neutral-300 text-sky-900 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
+                  >
+                    {Object.values(ReportStatus).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <select
-                  value={report.status}
-                  onChange={(e) =>
-                    updateReportStatus(
-                      report.id,
-                      e.target.value as ReportStatus
-                    )
-                  }
-                  className="bg-neutral-900 border border-neutral-800 text-neutral-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/20"
-                >
-                  {Object.values(ReportStatus).map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {filteredReports.length === 0 && (
-            <div className="text-center py-12 text-neutral-500 bg-neutral-900/50 rounded-xl border border-neutral-800">
-              No reports found matching the selected filters.
-            </div>
-          )}
-        </div>
-      </main>
+            {filteredReports.length === 0 && (
+              <div className="text-center py-12 text-neutral-500 bg-neutral-900/50 rounded-xl border border-neutral-800">
+                No reports found matching the selected filters.
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
