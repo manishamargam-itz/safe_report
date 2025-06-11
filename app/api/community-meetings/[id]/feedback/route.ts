@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+type Params = {
+  params: {
+    id: string;
+  };
+};
+
 // GET all feedback for a meeting
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, { params }: Params) {
   try {
     const { id } = params;
 
@@ -21,10 +24,7 @@ export async function GET(
 }
 
 // POST new feedback for a meeting
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, { params }: Params) {
   try {
     const { id } = params;
     const body = await req.json();
