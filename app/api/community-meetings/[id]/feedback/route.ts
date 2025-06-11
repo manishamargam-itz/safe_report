@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 // GET all feedback for a meeting
-export async function GET(req: Request) {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    // Extract meeting id from the URL
-    const url = new URL(req.url);
-    const segments = url.pathname.split("/");
-    const id = segments[segments.length - 2]; // [id] is the second last segment
+    const { id } = params;
 
     const feedbacks = await prisma.feedback.findMany({
       where: { meetingId: id },
@@ -16,5 +16,27 @@ export async function GET(req: Request) {
     return NextResponse.json(feedbacks);
   } catch (err) {
     return NextResponse.json({ error: "Failed to fetch feedback" }, { status: 500 });
+  }
+}
+
+// POST new feedback for a meeting
+export async function POST(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    const body = await req.json();
+
+    const feedback = await prisma.feedback.create({
+      data: {
+        ...body,
+        meetingId: id,
+      },
+    });
+
+    return NextResponse.json(feedback, { status: 201 });
+  } catch (err) {
+    return NextResponse.json({ error: "Failed to create feedback" }, { status: 500 });
   }
 }
